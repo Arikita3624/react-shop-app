@@ -1,0 +1,92 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "title": "Product A",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 1000000.0,
+      "stock": 150,
+      "category_id": 1,
+      "status": "available",
+      "isDeleted": false,
+      "description": "It's Product A",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Category A",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "variants": [
+    {
+      "id": 1,
+      "name": "Variant A",
+      "product_id": 1,
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "carts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "total_price": 1000000.0,
+      "discount_percent": 10,
+      "status": "active",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "cartItems": [
+    {
+      "id": 1,
+      "cart_id": 1,
+      "product_id": 1,
+      "quantity": 1,
+      "price": 1000000.0,
+      "subtotal": 1000000.0,
+      "discount": 100000.0,
+      "total": 900000.0,
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "status": "pending",
+      "payment_method": "cash",
+      "payment_status": "paid",
+      "subtotal": 1000000.0,
+      "discount_total": 100000.0,
+      "grand_total": 900000.0,
+      "note": "note",
+      "cancel_reason": "cancel reason",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "orderItems": [
+    {
+      "id": 1,
+      "order_id": 1,
+      "product_id": 1,
+      "product_name": "Product A",
+      "sku": "PROD-A-001",
+      "price": 1000000.0,
+      "quantity": 1,
+      "discount": 100000.0,
+      "tax": 0.0,
+      "subtotal": 1000000.0,
+      "total": 900000.0,
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ]
+}
