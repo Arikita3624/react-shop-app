@@ -3,6 +3,7 @@ import instance from "@/config/axios";
 import { Button, Pagination, Popconfirm, Table } from "antd";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
+import { useState } from "react"; // 👈 thêm
 
 const Products = () => {
   // fetch Api Products
@@ -26,18 +27,14 @@ const Products = () => {
     },
   });
 
-  //columns
+  // 👇 thêm rất nhẹ
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
+  //columns (giữ nguyên)
   const colums = [
-    {
-      title: "STT",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-    },
+    { title: "STT", dataIndex: "id", key: "id" },
+    { title: "Title", dataIndex: "title", key: "title" },
     {
       title: "Thumbnail",
       dataIndex: "thumbnail",
@@ -46,16 +43,8 @@ const Products = () => {
         <img src={thumbnail} alt="" width={50} height={50} />
       ),
     },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "stock",
-    },
+    { title: "Price", dataIndex: "price", key: "price" },
+    { title: "Stock", dataIndex: "stock", key: "stock" },
     {
       title: "Category",
       dataIndex: "category_id",
@@ -78,17 +67,7 @@ const Products = () => {
         </span>
       ),
     },
-    {
-      title: "Is Deleted",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      render: (isDeleted: boolean) => (isDeleted ? "true" : "false"),
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
+    { title: "Description", dataIndex: "description", key: "description" },
     {
       title: "Action",
       key: "action",
@@ -112,12 +91,16 @@ const Products = () => {
       ),
     },
   ];
-  //data Source
+
+  //data Source (giữ nguyên mapping)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataSource = products?.map((product: any) => ({
     key: product.id,
     ...product,
   }));
+
+  // 👇 cắt trang 5 item
+  const pagedData = dataSource?.slice((page - 1) * pageSize, page * pageSize);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
@@ -134,9 +117,19 @@ const Products = () => {
           </Link>
         </div>
       </div>
+
       <div>
-        <Table columns={colums} dataSource={dataSource} pagination={false} />
-        <Pagination align="center" defaultCurrent={1} total={50} />
+        <Table columns={colums} dataSource={pagedData} pagination={false} />
+
+        <Pagination
+          align="center"
+          current={page}
+          pageSize={pageSize}
+          total={dataSource?.length || 0}
+          showSizeChanger={false}
+          showQuickJumper
+          onChange={(p) => setPage(p)}
+        />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import {
   VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import Sider from "antd/es/layout/Sider";
 
 const { Header, Content } = Layout;
@@ -17,6 +17,39 @@ const LayoutAdmin: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const location = useLocation(); // Lấy đường dẫn hiện tại
+  const navigate = useNavigate(); // Thêm useNavigate để điều hướng
+
+  // Xác định key dựa trên đường dẫn hiện tại
+  const getSelectedKey = () => {
+    switch (location.pathname) {
+      case "/admin/dashboard":
+        return "1";
+      case "/admin/products":
+        return "2";
+      case "/admin/categories":
+        return "3";
+      default:
+        return "1"; // Mặc định là Dashboard nếu không khớp
+    }
+  };
+
+  // Xử lý khi nhấp vào Menu item
+  const handleMenuClick = (e: { key: string }) => {
+    switch (e.key) {
+      case "1":
+        navigate("/admin");
+        break;
+      case "2":
+        navigate("/admin/products");
+        break;
+      case "3":
+        navigate("/admin/categories");
+        break;
+      default:
+        navigate("/admin/dashboard");
+    }
+  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -55,7 +88,9 @@ const LayoutAdmin: React.FC = () => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          selectedKeys={[getSelectedKey()]} // Sử dụng selectedKeys động
+          defaultSelectedKeys={["1"]} // Giá trị mặc định khi load lần đầu
+          onClick={handleMenuClick} // Thêm sự kiện click
           items={[
             { key: "1", icon: <UserOutlined />, label: "Dashboard" },
             { key: "2", icon: <VideoCameraOutlined />, label: "Products" },

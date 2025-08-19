@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Card,
@@ -11,7 +12,7 @@ import {
   Row,
   Col,
 } from "antd";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/config/axios";
 import { useForm, type FormProps } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
@@ -28,15 +29,26 @@ type FieldType = {
   variant_ids?: number[];
 };
 
-const ProductsAdd = () => {
+const ProductsEdit = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = useForm();
+  const { id } = useParams();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
-    data: categories,
+    data: product,
     isLoading,
     isError,
   } = useQuery({
+    queryKey: ["products", id],
+    queryFn: async () => {
+      const res = await instance.get(`/products/${id}`);
+      return res.data;
+    },
+  });
+
+  const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const res = await instance.get("/categories");
@@ -52,37 +64,70 @@ const ProductsAdd = () => {
     },
   });
 
+  const { data: productVariants } = useQuery({
+    queryKey: ["productVariants", id],
+    queryFn: async () => {
+      const res = await instance.get(`/productVariants?product_id=${id}`);
+      return res.data;
+    },
+  });
+
   const { mutate } = useMutation({
-    mutationFn: async (products: FieldType) => {
-      const { variant_ids, ...productBody } = products;
+    mutationFn: async (values: FieldType) => {
+      const { variant_ids, ...productBody } = values;
+      const productId = Number(id); // Chuyển đổi id sang số
 
-      const res = await instance.post("/products", productBody);
-      const product = res.data;
+      // Cập nhật sản phẩm
+      const res = await instance.put(`/products/${id}`, productBody);
+      const updatedProduct = res.data;
 
+      // Xử lý cập nhật biến thể
+      if (productVariants) {
+        // Xóa các biến thể không còn trong lựa chọn mới
+        await Promise.all(
+          productVariants
+            .filter((pv: any) => !variant_ids?.includes(pv.variant_id))
+            .map((pv: any) => instance.delete(`/productVariants/${pv.id}`))
+        );
+      }
+
+      // Thêm hoặc cập nhật các biến thể mới
       if (variant_ids && variant_ids.length) {
         const mapById = new Map(
           (variants as VariantsType[]).map((v) => [v.id, v])
         );
 
         await Promise.all(
-          variant_ids.map((vid) =>
-            instance.post("/productVariants", {
-              product_id: product.id,
-              variant_id: vid,
-              price: mapById.get(vid)?.price ?? null,
-            })
-          )
+          variant_ids.map((vid) => {
+            const existingVariant = productVariants?.find(
+              (pv: any) => pv.variant_id === vid
+            );
+            if (existingVariant) {
+              return instance.put(`/productVariants/${existingVariant.id}`, {
+                product_id: productId, // Sử dụng productId đã chuyển đổi sang số
+                variant_id: vid,
+                price: mapById.get(vid)?.price ?? null,
+              });
+            } else {
+              return instance.post("/productVariants", {
+                product_id: productId, // Sử dụng productId đã chuyển đổi sang số
+                variant_id: vid,
+                price: mapById.get(vid)?.price ?? null,
+              });
+            }
+          })
         );
       }
 
-      return product;
+      return updatedProduct;
     },
     onSuccess: () => {
-      messageApi.success("Add product successfully");
-      form.resetFields();
+      messageApi.success("Update product successfully");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      setTimeout(() => navigate("/admin/products"), 1000); // Đợi 1 giây để thông báo hiển thị
     },
     onError: () => {
-      messageApi.error("Add product failed");
+      messageApi.error("Update product failed");
     },
   });
 
@@ -97,20 +142,21 @@ const ProductsAdd = () => {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+  if (isError) return <div>Error to load data</div>;
+
+  // Đặt giá trị ban đầu cho variant_ids dựa trên productVariants
+  const initialVariantIds =
+    productVariants?.map((pv: any) => pv.variant_id) || [];
 
   return (
     <div className="min-h-screen flex items-start justify-center p-4">
       {contextHolder}
-
       <div className="w-full max-w-4xl">
         <Card
           className="shadow-sm"
-          headStyle={{ padding: "12px 16px" }}
-          bodyStyle={{ padding: 16 }}
-          title={<span className="text-lg font-semibold">Product Add</span>}
+          title={<span className="text-lg font-semibold">Product Edit</span>}
           extra={
-            <Link to={"/admin/products"}>
+            <Link to="/admin/products">
               <Button type="primary">Back to list</Button>
             </Link>
           }
@@ -118,6 +164,7 @@ const ProductsAdd = () => {
           <Form
             className="compact-form"
             form={form}
+            initialValues={{ ...product, variant_ids: initialVariantIds }}
             name="basic"
             size="small"
             layout="vertical"
@@ -131,9 +178,7 @@ const ProductsAdd = () => {
                 <Form.Item<FieldType>
                   label="Title"
                   name="title"
-                  rules={[
-                    { required: true, message: "Please input your title!" },
-                  ]}
+                  rules={[{ required: true, message: "Pls input title" }]}
                 >
                   <Input placeholder="Eg. iPhone 15 Pro" />
                 </Form.Item>
@@ -143,9 +188,7 @@ const ProductsAdd = () => {
                 <Form.Item<FieldType>
                   label="Thumbnail"
                   name="thumbnail"
-                  rules={[
-                    { required: true, message: "Please input your thumbnail!" },
-                  ]}
+                  rules={[{ required: true, message: "Pls input thumbnail" }]}
                 >
                   <Input placeholder="https://..." />
                 </Form.Item>
@@ -156,11 +199,11 @@ const ProductsAdd = () => {
                   label="Price"
                   name="price"
                   rules={[
-                    { required: true, message: "Please input your price!" },
+                    { required: true, message: "Pls input price" },
                     {
                       type: "number",
                       transform: (v) => Number(v),
-                      message: "Price must be a number",
+                      message: "Giá phải là số",
                     },
                     {
                       validator: (_, v) =>
@@ -184,11 +227,11 @@ const ProductsAdd = () => {
                   label="Stock"
                   name="stock"
                   rules={[
-                    { required: true, message: "Please input your stock!" },
+                    { required: true, message: "Pls input stock" },
                     {
                       type: "number",
                       transform: (v) => Number(v),
-                      message: "Stock must be a number",
+                      message: "Số lượng phải là số",
                     },
                     {
                       validator: (_, v) =>
@@ -211,13 +254,10 @@ const ProductsAdd = () => {
                 <Form.Item<FieldType>
                   label="Category"
                   name="category_id"
-                  rules={[
-                    { required: true, message: "Please input your category!" },
-                  ]}
+                  rules={[{ required: true, message: "Pls select category" }]}
                 >
                   <Select
-                    placeholder="Select category"
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    placeholder="Chọn danh mục"
                     options={categories?.map((category: any) => ({
                       label: category.name,
                       value: category.id,
@@ -230,8 +270,7 @@ const ProductsAdd = () => {
                 <Form.Item<FieldType>
                   label="Status"
                   name="status"
-                  initialValue="available"
-                  rules={[{ required: true, message: "Please select status!" }]}
+                  rules={[{ required: true, message: "Pls select status!" }]}
                 >
                   <Select
                     options={[
@@ -246,7 +285,7 @@ const ProductsAdd = () => {
                 <Form.Item<FieldType> label="Variants" name="variant_ids">
                   <Select
                     mode="multiple"
-                    placeholder="Select variant template (optional)"
+                    placeholder="Select variants"
                     showSearch
                     allowClear
                     optionFilterProp="label"
@@ -273,7 +312,7 @@ const ProductsAdd = () => {
                 <Form.Item label="Description" name="description">
                   <TextArea
                     autoSize={{ minRows: 2, maxRows: 4 }}
-                    placeholder="Short description"
+                    placeholder="Mô tả ngắn"
                   />
                 </Form.Item>
               </Col>
@@ -293,4 +332,4 @@ const ProductsAdd = () => {
   );
 };
 
-export default ProductsAdd;
+export default ProductsEdit;

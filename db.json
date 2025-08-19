@@ -1,30 +1,24 @@
 {
   "products": [
     {
-      "id": 1,
-      "title": "Product A",
+      "title": "Product A updated 1",
       "thumbnail": "https://picsum.photos/200/200",
       "price": 1000000,
       "stock": 150,
       "category_id": 1,
-      "status": "available",
-      "isDeleted": false,
+      "status": "unavailable",
       "description": "It's Product A",
-      "createdAt": "2022-01-01T00:00:00.000Z",
-      "updatedAt": "2022-01-01T00:00:00.000Z"
+      "id": 1
     },
     {
-      "id": 2,
-      "title": "Product 2 demo",
+      "title": "Product 2 demo updated",
       "thumbnail": "https://picsum.photos/200/200",
       "price": 100000,
       "stock": 1000,
       "category_id": 1,
       "status": "available",
-      "isDeleted": false,
       "description": "haha",
-      "createdAt": "2022-01-01T00:00:00.000Z",
-      "updatedAt": "2022-01-01T00:00:00.000Z"
+      "id": 2
     },
     {
       "title": "product 3 demo",
@@ -45,6 +39,36 @@
       "status": "unavailable",
       "description": "desc",
       "id": 4
+    },
+    {
+      "title": "Product 5 demo",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 4000000,
+      "stock": 40,
+      "category_id": 2,
+      "status": "available",
+      "description": "Product 5 deno",
+      "id": 5
+    },
+    {
+      "title": "Product 6 demo updated 1",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 20000000,
+      "stock": 1000,
+      "category_id": 2,
+      "status": "unavailable",
+      "description": "Desccription",
+      "id": 6
+    },
+    {
+      "title": "Product 7 demo updated 1",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 1000000,
+      "stock": 100,
+      "category_id": 2,
+      "status": "unavailable",
+      "description": "desc",
+      "id": 7
     }
   ],
   "categories": [
@@ -83,10 +107,40 @@
   ],
   "productVariants": [
     {
-      "product_id": 4,
+      "product_id": 6,
       "variant_id": 1,
       "price": 1000000,
       "id": 1
+    },
+    {
+      "product_id": 4,
+      "variant_id": 1,
+      "price": 1000000,
+      "id": 2
+    },
+    {
+      "product_id": 5,
+      "variant_id": 1,
+      "price": 1000000,
+      "id": 3
+    },
+    {
+      "product_id": 2,
+      "variant_id": 2,
+      "price": 900000,
+      "id": 4
+    },
+    {
+      "product_id": 1,
+      "variant_id": 1,
+      "price": 1000000,
+      "id": 5
+    },
+    {
+      "product_id": 7,
+      "variant_id": 2,
+      "price": 900000,
+      "id": 6
     }
   ],
   "carts": [
