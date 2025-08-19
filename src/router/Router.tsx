@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import LayoutAdmin from "@/components/admin/LayoutAdmin";
 import Products from "@/components/admin/views/products/Products";
+import ProductsAdd from "@/components/admin/views/products/ProductsAdd";
 
 const Router = () => {
   return (
@@ -16,6 +17,7 @@ const Router = () => {
 
           {/* Các trang con */}
           <Route path="products" element={<Products />} />
+          <Route path="products/add" element={<ProductsAdd />} />
           <Route path="categories" element={<h2>Categories</h2>} />
         </Route>
 

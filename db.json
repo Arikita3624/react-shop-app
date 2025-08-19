@@ -4,7 +4,7 @@
       "id": 1,
       "title": "Product A",
       "thumbnail": "https://picsum.photos/200/200",
-      "price": 1000000.0,
+      "price": 1000000,
       "stock": 150,
       "category_id": 1,
       "status": "available",
@@ -12,6 +12,39 @@
       "description": "It's Product A",
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Product 2 demo",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 100000,
+      "stock": 1000,
+      "category_id": 1,
+      "status": "available",
+      "isDeleted": false,
+      "description": "haha",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "title": "product 3 demo",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 300000,
+      "stock": 30,
+      "category_id": 1,
+      "status": "unavailable",
+      "description": "desc",
+      "id": 3
+    },
+    {
+      "title": "product 4 demo",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 300000,
+      "stock": 30,
+      "category_id": 1,
+      "status": "unavailable",
+      "description": "desc",
+      "id": 4
     }
   ],
   "categories": [
@@ -20,22 +53,47 @@
       "name": "Category A",
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Category B",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
     }
   ],
   "variants": [
     {
       "id": 1,
       "name": "Variant A",
+      "price": 1000000,
+      "sku": "PROD-A-001",
       "product_id": 1,
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Variant B",
+      "sku": "PROD-B-001",
+      "price": 900000,
+      "product_id": 1,
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "productVariants": [
+    {
+      "product_id": 4,
+      "variant_id": 1,
+      "price": 1000000,
+      "id": 1
     }
   ],
   "carts": [
     {
       "id": 1,
       "user_id": 1,
-      "total_price": 1000000.0,
+      "total_price": 1000000,
       "discount_percent": 10,
       "status": "active",
       "createdAt": "2022-01-01T00:00:00.000Z",
@@ -47,11 +105,12 @@
       "id": 1,
       "cart_id": 1,
       "product_id": 1,
+      "variant_id": 1,
       "quantity": 1,
-      "price": 1000000.0,
-      "subtotal": 1000000.0,
-      "discount": 100000.0,
-      "total": 900000.0,
+      "price": 1000000,
+      "subtotal": 1000000,
+      "discount": 10,
+      "total": 900000,
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
     }
@@ -63,9 +122,9 @@
       "status": "pending",
       "payment_method": "cash",
       "payment_status": "paid",
-      "subtotal": 1000000.0,
-      "discount_total": 100000.0,
-      "grand_total": 900000.0,
+      "subtotal": 1000000,
+      "discount_total": 900000,
+      "grand_total": 900000,
       "note": "note",
       "cancel_reason": "cancel reason",
       "createdAt": "2022-01-01T00:00:00.000Z",
@@ -77,14 +136,14 @@
       "id": 1,
       "order_id": 1,
       "product_id": 1,
+      "variant_id": 1,
       "product_name": "Product A",
       "sku": "PROD-A-001",
-      "price": 1000000.0,
+      "price": 1000000,
       "quantity": 1,
-      "discount": 100000.0,
-      "tax": 0.0,
-      "subtotal": 1000000.0,
-      "total": 900000.0,
+      "discount": 100000,
+      "subtotal": 1000000,
+      "total": 900000,
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
     }

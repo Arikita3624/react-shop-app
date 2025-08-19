@@ -92,10 +92,10 @@ const Products = () => {
     {
       title: "Action",
       key: "action",
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, product: any) => (
         <div className="flex gap-2">
-          <Link to={`admin/products/${product.id}/edit`}>
+          <Link to={`${product.id}/edit`}>
             <Button type="primary" icon={<EditOutlined />}>
               Edit
             </Button>
@@ -129,9 +129,9 @@ const Products = () => {
           <h1 className="text-2xl font-bold">Products List</h1>
         </div>
         <div>
-          <Button type="primary">
-            <a href="/admin/products/create">Create</a>
-          </Button>
+          <Link to={`add`}>
+            <Button type="primary">Create</Button>
+          </Link>
         </div>
       </div>
       <div>
