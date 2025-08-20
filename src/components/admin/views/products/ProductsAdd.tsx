@@ -56,7 +56,13 @@ const ProductsAdd = () => {
     mutationFn: async (products: FieldType) => {
       const { variant_ids, ...productBody } = products;
 
-      const res = await instance.post("/products", productBody);
+      // Thêm createdAt tự động với thời gian hiện tại
+      const payload = {
+        ...productBody,
+        createdAt: new Date().toISOString(), // 04:18 PM +07, Wednesday, August 20, 2025
+      };
+
+      const res = await instance.post("/products", payload);
       const product = res.data;
 
       if (variant_ids && variant_ids.length) {
@@ -106,11 +112,9 @@ const ProductsAdd = () => {
       <div className="w-full max-w-4xl">
         <Card
           className="shadow-sm"
-          headStyle={{ padding: "12px 16px" }}
-          bodyStyle={{ padding: 16 }}
           title={<span className="text-lg font-semibold">Product Add</span>}
           extra={
-            <Link to={"/admin/products"}>
+            <Link to="/admin/products">
               <Button type="primary">Back to list</Button>
             </Link>
           }
@@ -212,7 +216,7 @@ const ProductsAdd = () => {
                   label="Category"
                   name="category_id"
                   rules={[
-                    { required: true, message: "Please input your category!" },
+                    { required: true, message: "Please select a category!" },
                   ]}
                 >
                   <Select

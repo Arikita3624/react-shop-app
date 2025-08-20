@@ -69,6 +69,16 @@
       "status": "unavailable",
       "description": "desc",
       "id": 7
+    },
+    {
+      "title": "Product 8 demo updated 1",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 2000000,
+      "stock": 23,
+      "category_id": 3,
+      "status": "unavailable",
+      "description": "desc",
+      "id": 8
     }
   ],
   "categories": [
@@ -83,6 +93,11 @@
       "name": "Category B",
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "name": "Category C",
+      "description": "Desc",
+      "id": 3
     }
   ],
   "variants": [
@@ -141,6 +156,12 @@
       "variant_id": 2,
       "price": 900000,
       "id": 6
+    },
+    {
+      "product_id": 8,
+      "variant_id": 1,
+      "price": 1000000,
+      "id": 7
     }
   ],
   "carts": [

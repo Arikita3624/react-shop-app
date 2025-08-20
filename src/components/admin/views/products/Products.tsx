@@ -3,7 +3,7 @@ import instance from "@/config/axios";
 import { Button, Pagination, Popconfirm, Table } from "antd";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import { useState } from "react"; // 👈 thêm
+import { useState } from "react";
 
 const Products = () => {
   // fetch Api Products
@@ -92,14 +92,12 @@ const Products = () => {
     },
   ];
 
-  //data Source (giữ nguyên mapping)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataSource = products?.map((product: any) => ({
     key: product.id,
     ...product,
   }));
 
-  // 👇 cắt trang 5 item
   const pagedData = dataSource?.slice((page - 1) * pageSize, page * pageSize);
 
   if (isLoading) return <div>Loading...</div>;
