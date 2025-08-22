@@ -1,16 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button, Card, Form, Input, message, Row, Col } from "antd";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import instance from "@/config/axios";
 import { useForm, type FormProps } from "antd/es/form/Form";
-
-// Định nghĩa kiểu dữ liệu
-type CategoryType = {
-  id: number;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-};
 
 type FieldType = {
   name?: string;
@@ -21,21 +13,14 @@ const CategoriesAdd = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = useForm();
 
-  const {
-    data: categories,
-    isLoading,
-    isError,
-  } = useQuery<CategoryType[]>({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const res = await instance.get("/categories");
-      return res.data;
-    },
-  });
-
   const { mutate } = useMutation({
     mutationFn: async (category: FieldType) => {
-      const res = await instance.post("/categories", category);
+      const payload = {
+        ...category,
+        createdAt: new Date().toISOString(),
+      };
+
+      const res = await instance.post("/categories", payload);
       return res.data;
     },
     onSuccess: () => {
@@ -58,9 +43,6 @@ const CategoriesAdd = () => {
   ) => {
     console.log("Failed:", errorInfo);
   };
-
-  if (isLoading) return <div>Loading categories...</div>;
-  if (isError) return <div>Error loading categories</div>;
 
   return (
     <div className="min-h-screen flex items-start justify-center p-4">

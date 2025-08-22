@@ -17,7 +17,6 @@ import instance from "@/config/axios";
 import { useForm, type FormProps } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 
-type VariantsType = { id: number; name: string; price: number };
 type FieldType = {
   title?: string;
   thumbnail?: string;
@@ -26,7 +25,6 @@ type FieldType = {
   status?: "available" | "unavailable";
   description?: string;
   category_id?: number;
-  variant_ids?: number[];
 };
 
 const ProductsEdit = () => {
@@ -37,7 +35,7 @@ const ProductsEdit = () => {
   const navigate = useNavigate();
 
   const {
-    data: product,
+    data: products,
     isLoading,
     isError,
   } = useQuery({
@@ -56,75 +54,20 @@ const ProductsEdit = () => {
     },
   });
 
-  const { data: variants } = useQuery({
-    queryKey: ["variants"],
-    queryFn: async () => {
-      const res = await instance.get("/variants");
-      return res.data;
-    },
-  });
-
-  const { data: productVariants } = useQuery({
-    queryKey: ["productVariants", id],
-    queryFn: async () => {
-      const res = await instance.get(`/productVariants?product_id=${id}`);
-      return res.data;
-    },
-  });
-
   const { mutate } = useMutation({
-    mutationFn: async (values: FieldType) => {
-      const { variant_ids, ...productBody } = values;
-      const productId = Number(id); // Chuyển đổi id sang số
-
-      // Cập nhật sản phẩm
-      const res = await instance.put(`/products/${id}`, productBody);
-      const updatedProduct = res.data;
-
-      // Xử lý cập nhật biến thể
-      if (productVariants) {
-        // Xóa các biến thể không còn trong lựa chọn mới
-        await Promise.all(
-          productVariants
-            .filter((pv: any) => !variant_ids?.includes(pv.variant_id))
-            .map((pv: any) => instance.delete(`/productVariants/${pv.id}`))
-        );
-      }
-
-      // Thêm hoặc cập nhật các biến thể mới
-      if (variant_ids && variant_ids.length) {
-        const mapById = new Map(
-          (variants as VariantsType[]).map((v) => [v.id, v])
-        );
-
-        await Promise.all(
-          variant_ids.map((vid) => {
-            const existingVariant = productVariants?.find(
-              (pv: any) => pv.variant_id === vid
-            );
-            if (existingVariant) {
-              return instance.put(`/productVariants/${existingVariant.id}`, {
-                product_id: productId, // Sử dụng productId đã chuyển đổi sang số
-                variant_id: vid,
-                price: mapById.get(vid)?.price ?? null,
-              });
-            } else {
-              return instance.post("/productVariants", {
-                product_id: productId, // Sử dụng productId đã chuyển đổi sang số
-                variant_id: vid,
-                price: mapById.get(vid)?.price ?? null,
-              });
-            }
-          })
-        );
-      }
-
-      return updatedProduct;
+    mutationFn: async (product: FieldType) => {
+      const payload = {
+        ...product,
+        createdAt: products?.createdAt,
+        updatedAt: new Date().toISOString(),
+      };
+      const res = await instance.put(`/products/${id}`, payload);
+      return res.data;
     },
     onSuccess: () => {
       messageApi.success("Update product successfully");
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      setTimeout(() => navigate("/admin/products"), 1000); // Đợi 1 giây để thông báo hiển thị
+      setTimeout(() => navigate("/admin/products"), 1000);
     },
     onError: () => {
       messageApi.error("Update product failed");
@@ -144,10 +87,6 @@ const ProductsEdit = () => {
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error to load data</div>;
 
-  // Đặt giá trị ban đầu cho variant_ids dựa trên productVariants
-  const initialVariantIds =
-    productVariants?.map((pv: any) => pv.variant_id) || [];
-
   return (
     <div className="min-h-screen flex items-start justify-center p-4">
       {contextHolder}
@@ -164,7 +103,7 @@ const ProductsEdit = () => {
           <Form
             className="compact-form"
             form={form}
-            initialValues={{ ...product, variant_ids: initialVariantIds }}
+            initialValues={products}
             name="basic"
             size="small"
             layout="vertical"
@@ -203,15 +142,13 @@ const ProductsEdit = () => {
                     {
                       type: "number",
                       transform: (v) => Number(v),
-                      message: "Giá phải là số",
+                      message: "Price must be a number",
                     },
                     {
                       validator: (_, v) =>
                         Number(v) > 0
                           ? Promise.resolve()
-                          : Promise.reject(
-                              new Error("Price must be greater than 0")
-                            ),
+                          : Promise.reject(new Error("Price must be > 0")),
                     },
                   ]}
                 >
@@ -231,7 +168,7 @@ const ProductsEdit = () => {
                     {
                       type: "number",
                       transform: (v) => Number(v),
-                      message: "Số lượng phải là số",
+                      message: "Stock must be a number",
                     },
                     {
                       validator: (_, v) =>
@@ -257,10 +194,10 @@ const ProductsEdit = () => {
                   rules={[{ required: true, message: "Pls select category" }]}
                 >
                   <Select
-                    placeholder="Chọn danh mục"
-                    options={categories?.map((category: any) => ({
-                      label: category.name,
-                      value: category.id,
+                    placeholder="Select category"
+                    options={categories?.map((cat: any) => ({
+                      label: cat.name,
+                      value: cat.id,
                     }))}
                   />
                 </Form.Item>
@@ -270,7 +207,7 @@ const ProductsEdit = () => {
                 <Form.Item<FieldType>
                   label="Status"
                   name="status"
-                  rules={[{ required: true, message: "Pls select status!" }]}
+                  rules={[{ required: true, message: "Pls select status" }]}
                 >
                   <Select
                     options={[
@@ -282,43 +219,20 @@ const ProductsEdit = () => {
               </Col>
 
               <Col span={24}>
-                <Form.Item<FieldType> label="Variants" name="variant_ids">
-                  <Select
-                    mode="multiple"
-                    placeholder="Select variants"
-                    showSearch
-                    allowClear
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                      String(option?.label || "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    maxTagCount="responsive"
-                    listHeight={220}
-                    options={variants?.map((v: VariantsType) => ({
-                      label: v.name,
-                      value: v.id,
-                    }))}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={24}>
-                <Divider style={{ margin: "6px 0 8px" }} />
+                <Divider />
               </Col>
 
               <Col span={24}>
                 <Form.Item label="Description" name="description">
                   <TextArea
                     autoSize={{ minRows: 2, maxRows: 4 }}
-                    placeholder="Mô tả ngắn"
+                    placeholder="Short description"
                   />
                 </Form.Item>
               </Col>
 
               <Col span={24}>
-                <Form.Item style={{ marginTop: 4, marginBottom: 0 }}>
+                <Form.Item>
                   <Button type="primary" htmlType="submit" block>
                     Submit
                   </Button>

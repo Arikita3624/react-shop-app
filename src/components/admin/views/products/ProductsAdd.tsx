@@ -16,7 +16,6 @@ import instance from "@/config/axios";
 import { useForm, type FormProps } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 
-type VariantsType = { id: number; name: string; price: number };
 type FieldType = {
   title?: string;
   thumbnail?: string;
@@ -25,7 +24,6 @@ type FieldType = {
   status?: "available" | "unavailable";
   description?: string;
   category_id?: number;
-  variant_ids?: number[];
 };
 
 const ProductsAdd = () => {
@@ -44,44 +42,15 @@ const ProductsAdd = () => {
     },
   });
 
-  const { data: variants } = useQuery({
-    queryKey: ["variants"],
-    queryFn: async () => {
-      const res = await instance.get("/variants");
-      return res.data;
-    },
-  });
-
   const { mutate } = useMutation({
-    mutationFn: async (products: FieldType) => {
-      const { variant_ids, ...productBody } = products;
-
-      // Thêm createdAt tự động với thời gian hiện tại
+    mutationFn: async (product: FieldType) => {
       const payload = {
-        ...productBody,
-        createdAt: new Date().toISOString(), // 04:18 PM +07, Wednesday, August 20, 2025
+        ...product,
+        createdAt: new Date().toISOString(),
       };
 
       const res = await instance.post("/products", payload);
-      const product = res.data;
-
-      if (variant_ids && variant_ids.length) {
-        const mapById = new Map(
-          (variants as VariantsType[]).map((v) => [v.id, v])
-        );
-
-        await Promise.all(
-          variant_ids.map((vid) =>
-            instance.post("/productVariants", {
-              product_id: product.id,
-              variant_id: vid,
-              price: mapById.get(vid)?.price ?? null,
-            })
-          )
-        );
-      }
-
-      return product;
+      return res.data;
     },
     onSuccess: () => {
       messageApi.success("Add product successfully");
@@ -96,14 +65,8 @@ const ProductsAdd = () => {
     mutate(values);
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
-
   if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+  if (isError) return <div>Error loading categories</div>;
 
   return (
     <div className="min-h-screen flex items-start justify-center p-4">
@@ -128,16 +91,13 @@ const ProductsAdd = () => {
             style={{ maxWidth: 920, margin: "0 auto" }}
             autoComplete="off"
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
           >
             <Row gutter={[12, 8]}>
               <Col xs={24} md={12}>
                 <Form.Item<FieldType>
                   label="Title"
                   name="title"
-                  rules={[
-                    { required: true, message: "Please input your title!" },
-                  ]}
+                  rules={[{ required: true, message: "Please input title!" }]}
                 >
                   <Input placeholder="Eg. iPhone 15 Pro" />
                 </Form.Item>
@@ -148,7 +108,7 @@ const ProductsAdd = () => {
                   label="Thumbnail"
                   name="thumbnail"
                   rules={[
-                    { required: true, message: "Please input your thumbnail!" },
+                    { required: true, message: "Please input thumbnail!" },
                   ]}
                 >
                   <Input placeholder="https://..." />
@@ -160,7 +120,7 @@ const ProductsAdd = () => {
                   label="Price"
                   name="price"
                   rules={[
-                    { required: true, message: "Please input your price!" },
+                    { required: true, message: "Please input price!" },
                     {
                       type: "number",
                       transform: (v) => Number(v),
@@ -170,9 +130,7 @@ const ProductsAdd = () => {
                       validator: (_, v) =>
                         Number(v) > 0
                           ? Promise.resolve()
-                          : Promise.reject(
-                              new Error("Price must be greater than 0")
-                            ),
+                          : Promise.reject(new Error("Price must be > 0")),
                     },
                   ]}
                 >
@@ -188,7 +146,7 @@ const ProductsAdd = () => {
                   label="Stock"
                   name="stock"
                   rules={[
-                    { required: true, message: "Please input your stock!" },
+                    { required: true, message: "Please input stock!" },
                     {
                       type: "number",
                       transform: (v) => Number(v),
@@ -216,15 +174,15 @@ const ProductsAdd = () => {
                   label="Category"
                   name="category_id"
                   rules={[
-                    { required: true, message: "Please select a category!" },
+                    { required: true, message: "Please select category!" },
                   ]}
                 >
                   <Select
                     placeholder="Select category"
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    options={categories?.map((category: any) => ({
-                      label: category.name,
-                      value: category.id,
+                    options={categories?.map((c: any) => ({
+                      label: c.name,
+                      value: c.id,
                     }))}
                   />
                 </Form.Item>
@@ -242,29 +200,6 @@ const ProductsAdd = () => {
                       { label: "Available", value: "available" },
                       { label: "Unavailable", value: "unavailable" },
                     ]}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={24}>
-                <Form.Item<FieldType> label="Variants" name="variant_ids">
-                  <Select
-                    mode="multiple"
-                    placeholder="Select variant template (optional)"
-                    showSearch
-                    allowClear
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                      String(option?.label || "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    maxTagCount="responsive"
-                    listHeight={220}
-                    options={variants?.map((v: VariantsType) => ({
-                      label: v.name,
-                      value: v.id,
-                    }))}
                   />
                 </Form.Item>
               </Col>

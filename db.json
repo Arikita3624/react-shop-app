@@ -1,84 +1,52 @@
 {
   "products": [
     {
-      "title": "Product A updated 1",
+      "title": "Product A updated 3",
       "thumbnail": "https://picsum.photos/200/200",
       "price": 1000000,
       "stock": 150,
       "category_id": 1,
       "status": "unavailable",
       "description": "It's Product A",
+      "updatedAt": "2025-08-21T06:22:21.508Z",
+      "createdAt": "2022-01-01T00:00:00.000Z",
       "id": 1
     },
     {
-      "title": "Product 2 demo updated",
-      "thumbnail": "https://picsum.photos/200/200",
-      "price": 100000,
-      "stock": 1000,
-      "category_id": 1,
-      "status": "available",
-      "description": "haha",
-      "id": 2
-    },
-    {
-      "title": "product 3 demo",
-      "thumbnail": "https://picsum.photos/200/200",
-      "price": 300000,
-      "stock": 30,
-      "category_id": 1,
-      "status": "unavailable",
-      "description": "desc",
-      "id": 3
-    },
-    {
-      "title": "product 4 demo",
-      "thumbnail": "https://picsum.photos/200/200",
-      "price": 300000,
-      "stock": 30,
-      "category_id": 1,
-      "status": "unavailable",
-      "description": "desc",
-      "id": 4
-    },
-    {
-      "title": "Product 5 demo",
-      "thumbnail": "https://picsum.photos/200/200",
-      "price": 4000000,
-      "stock": 40,
-      "category_id": 2,
-      "status": "available",
-      "description": "Product 5 deno",
-      "id": 5
-    },
-    {
-      "title": "Product 6 demo updated 1",
-      "thumbnail": "https://picsum.photos/200/200",
-      "price": 20000000,
-      "stock": 1000,
-      "category_id": 2,
-      "status": "unavailable",
-      "description": "Desccription",
-      "id": 6
-    },
-    {
-      "title": "Product 7 demo updated 1",
+      "title": "Product 2 demo",
       "thumbnail": "https://picsum.photos/200/200",
       "price": 1000000,
       "stock": 100,
+      "category_id": 3,
+      "status": "available",
+      "description": "desc",
+      "createdAt": "2025-08-21T05:47:00.000Z",
+      "updatedAt": "2025-08-21T05:47:00.000Z",
+      "id": 2
+    },
+    {
+      "title": "Product 3 demo updated 1",
+      "thumbnail": "https://picsum.photos/200/200",
+      "price": 20000000,
+      "stock": 20,
       "category_id": 2,
       "status": "unavailable",
       "description": "desc",
-      "id": 7
+      "createdAt": "2025-08-21T06:07:41.319Z",
+      "updatedAt": "2025-08-21T06:26:24.119Z",
+      "id": 3
     },
     {
-      "title": "Product 8 demo updated 1",
+      "title": "Product 4 demo updated 1",
       "thumbnail": "https://picsum.photos/200/200",
-      "price": 2000000,
-      "stock": 23,
-      "category_id": 3,
-      "status": "unavailable",
+      "price": 100000000,
+      "stock": 120,
+      "category_id": 1,
+      "status": "available",
       "description": "desc",
-      "id": 8
+      "createdAt": "2025-08-21T06:20:38.614Z",
+      "updatedAt": "2025-08-21T06:20:38.614Z",
+      "id": 4
     }
   ],
   "categories": [
@@ -98,70 +66,12 @@
       "name": "Category C",
       "description": "Desc",
       "id": 3
-    }
-  ],
-  "variants": [
-    {
-      "id": 1,
-      "name": "Variant A",
-      "price": 1000000,
-      "sku": "PROD-A-001",
-      "product_id": 1,
-      "createdAt": "2022-01-01T00:00:00.000Z",
-      "updatedAt": "2022-01-01T00:00:00.000Z"
     },
     {
-      "id": 2,
-      "name": "Variant B",
-      "sku": "PROD-B-001",
-      "price": 900000,
-      "product_id": 1,
-      "createdAt": "2022-01-01T00:00:00.000Z",
-      "updatedAt": "2022-01-01T00:00:00.000Z"
-    }
-  ],
-  "productVariants": [
-    {
-      "product_id": 6,
-      "variant_id": 1,
-      "price": 1000000,
-      "id": 1
-    },
-    {
-      "product_id": 4,
-      "variant_id": 1,
-      "price": 1000000,
-      "id": 2
-    },
-    {
-      "product_id": 5,
-      "variant_id": 1,
-      "price": 1000000,
-      "id": 3
-    },
-    {
-      "product_id": 2,
-      "variant_id": 2,
-      "price": 900000,
+      "name": "Category D",
+      "description": "desc",
+      "createdAt": "2025-08-21T06:20:38.614Z",
       "id": 4
-    },
-    {
-      "product_id": 1,
-      "variant_id": 1,
-      "price": 1000000,
-      "id": 5
-    },
-    {
-      "product_id": 7,
-      "variant_id": 2,
-      "price": 900000,
-      "id": 6
-    },
-    {
-      "product_id": 8,
-      "variant_id": 1,
-      "price": 1000000,
-      "id": 7
     }
   ],
   "carts": [
@@ -180,7 +90,6 @@
       "id": 1,
       "cart_id": 1,
       "product_id": 1,
-      "variant_id": 1,
       "quantity": 1,
       "price": 1000000,
       "subtotal": 1000000,
@@ -211,7 +120,6 @@
       "id": 1,
       "order_id": 1,
       "product_id": 1,
-      "variant_id": 1,
       "product_name": "Product A",
       "sku": "PROD-A-001",
       "price": 1000000,
@@ -219,6 +127,17 @@
       "discount": 100000,
       "subtotal": 1000000,
       "total": 900000,
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admintrator@gmail.com",
+      "password": "admin",
+      "roleId": "admin",
       "createdAt": "2022-01-01T00:00:00.000Z",
       "updatedAt": "2022-01-01T00:00:00.000Z"
     }

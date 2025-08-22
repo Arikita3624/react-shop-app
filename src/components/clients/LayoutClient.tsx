@@ -4,14 +4,12 @@ import Footer from "../layouts/Footer";
 
 const LayoutClient = () => {
   return (
-    <div className="container">
-      <div>
-        <Header />
+    <div>
+      <Header />
+      <div className="container mx-auto px-42">
+        <Outlet />
       </div>
-      <Outlet />
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
